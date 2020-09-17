@@ -123,6 +123,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "focus-test"
+    }
+  },
+  "defaultProject": "focus-test",
+  "cli": {
+    "analytics": false
+  }
 }
