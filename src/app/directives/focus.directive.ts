@@ -11,7 +11,7 @@ import { takeUntil } from 'rxjs/operators';
 export class FocusService {
 
   private static seleted = null;
-  private stopListening: Subject<null> = new Subject();
+  private stopListening$: Subject<null> = new Subject();
 
   public selectedElement(elm: HTMLElement): void {
     if (FocusService.seleted === null) FocusService.seleted = elm;
@@ -25,14 +25,14 @@ export class FocusService {
     if (FocusService.seleted) {
       FocusService.seleted.innerHTML = 'FOCUS LOSS ON :' + FocusService.seleted.className;
       FocusService.seleted = null;
-      this.stopListening.next();
+      this.stopListening$.next();
     }
   }
 
   private listenToClickOutSide(): void {
     const mouseDown$ = fromEvent(window, 'mousedown');
     mouseDown$.pipe(
-      takeUntil(this.stopListening),
+      takeUntil(this.stopListening$),
     ).subscribe( elm => {
       if(FocusService.seleted !== elm.target) this.clearSelected();
     });
@@ -41,7 +41,7 @@ export class FocusService {
   public listenToWindowBlur(): void {
     const windowBlur$ = fromEvent(window, 'blur');
     windowBlur$.pipe(
-      takeUntil(this.stopListening),
+      takeUntil(this.stopListening$),
     ).subscribe( elm => {
       if(FocusService.seleted !== elm.target) this.clearSelected();
     });
@@ -66,6 +66,6 @@ export class FocusDirective {
 
   private elementSelected(): void {
     this.focusServie.selectedElement(this.elementRef.nativeElement);
-      this.elementRef.nativeElement.innerHTML = `FOCUS ON : ${this.elementRef.nativeElement.className}`;
+    this.elementRef.nativeElement.innerHTML = `FOCUS ON : ${this.elementRef.nativeElement.className}`;
   }
 }
