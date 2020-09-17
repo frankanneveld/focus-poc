@@ -9,8 +9,10 @@ import { takeUntil } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class FocusService {
+
   private static seleted = null;
   private stopListening: Subject<null> = new Subject();
+
   public selectedElement(elm: HTMLElement): void {
     if (FocusService.seleted === null) FocusService.seleted = elm;
     if (FocusService.seleted !== elm) FocusService.seleted.innerHTML = 'FOCUS LOSS ON :' + FocusService.seleted.className;
@@ -28,7 +30,7 @@ export class FocusService {
   }
 
   private listenToClickOutSide(): void {
-    let mouseDown$ = fromEvent(window, 'mousedown');
+    const mouseDown$ = fromEvent(window, 'mousedown');
     mouseDown$.pipe(
       takeUntil(this.stopListening),
     ).subscribe( elm => {
@@ -37,7 +39,7 @@ export class FocusService {
   }
 
   public listenToWindowBlur(): void {
-    let windowBlur$ = fromEvent(window, 'blur');
+    const windowBlur$ = fromEvent(window, 'blur');
     windowBlur$.pipe(
       takeUntil(this.stopListening),
     ).subscribe( elm => {
@@ -45,6 +47,8 @@ export class FocusService {
     });
   }
 }
+
+
 /**
  * The Directive
  */
@@ -52,6 +56,7 @@ export class FocusService {
   selector: '[appFocus]'
 })
 export class FocusDirective {
+
   @HostListener('mousedown', ['$event']) onMouseDown(event: MouseEvent) {
     if(this.elementRef.nativeElement ===  event.target) this.elementSelected();
   }
